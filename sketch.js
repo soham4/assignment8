@@ -37,10 +37,10 @@ function draw() {
   imageMode(CENTER);
   image(bgImage2, 320, 240, 640, 480);
   image(bgImage, 320, 240, 640, 480);
-  if(remaining===0){
+  if(state1===false && state2===true){
     drawGameOver();
   }
-  if(remaining!=0 && state1===false && state2===false){
+  if(state1===false && state2===false){
     drawMenu();
   }
   if(state1===true && state2===false)
@@ -66,7 +66,7 @@ function draw() {
 }
 function getData() {
   console.log("FETCHING!");
-  fetch("https://deckofcardsapi.com/api/deck/new/draw/?count=2")
+  fetch("https://deckofcardsapi.com/api/deck/n58kl14gcckk/draw/?count=2")
   .then(response => response.json())
   .then(data => {
     console.log(data);
@@ -77,7 +77,11 @@ function getData() {
     suit1=data.cards[0].suit;
     suit2=data.cards[1].suit;
     remaining=data.remaining;
-    console.log(remaining);
+    if(remaining===0){
+     state1=false;
+      state2=true;
+      fetch("https://deckofcardsapi.com/api/deck/n58kl14gcckk/shuffle/")
+    }
     return loadCardImage(data);
   });
 }
@@ -140,9 +144,15 @@ function drawMenu(){
   text("Press Enter to Begin", 320, 400);
 }
 function keyPressed(){
-  if(keyCode===ENTER){
+  if(state1===false && state2=== false && keyCode===ENTER){
     state1=true;
     state2=false;
+  }
+  if(state1===false && state2===true && keyCode===ENTER){
+    state1=true;
+    state2=false;
+    score1=0;
+    score2=0;
   }
 }
 function drawGameOver(){
@@ -155,5 +165,5 @@ function drawGameOver(){
   if(score1===score2){
     text("Game is a Draw!", 320, 200);
   }
-  text("Press Enter to play again", 320, 400);
+  text("Press ENTER to play again", 320, 400);
 }
